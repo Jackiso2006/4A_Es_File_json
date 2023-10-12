@@ -11,27 +11,36 @@ window.onload = function () {
     // i successivi parametri sono quelli attuali che verranno inviati alla funzione
 };
 
-function leggiFile(testo) {
+function leggiFile() {
     // senza bind this è uguale al bottone, con .bind(this) viene inviato il contesto 
-    console.log(testo);
     console.log(this); // visualizzo il contesto
-
     console.log(this.value); // mi stampa il valore del contesto selezionato
     // nel nostro caso il contesto è l'input file quindi ci stampa il contenuto del file selezionato
 
 
     let reader = new FileReader();
     reader.onload = fineLettura;
-    reader.readAsDataURL(this.files[0]);
+    reader.readAsDataURL(this.files[0]); // chiamata sincrona che contiene una chiamata asincrona al suo interno
     /**
      * FileReader ha funzioni asincrone perchè sono esecuzioni lunghe
      * nel nostro caso viene eseguito readAsDataURL e quando finirà partirà l'onload che richiama fineLettura
-     * fineLettura è il nostro callback, verrà richiamata a fine lettura
+     * fineLettura è il nostro callback, verrà richiamata a fine lettura dal flusso secondario
+     * callback: parametro inviato ad una funzione asincrona che mi permette di risincronizzare i flussi quando è terminata la funzione
+     * 
      */
 
-    function fineLettura(e) {
-        let datiFile = e.target.result;
-        let stringa = datiFile.split(",")[1];
-        alert(atob(stringa));
-    }
+}
+
+function fineLettura(e) {
+    // entro qua quando è stato richiamato il callback
+
+    /**
+     * il parametro e contiene:
+     * srcElement => ci dice chi ha scatenato l'evento
+     * target/result => ha il contenuto del contesto
+     */
+    let datiFile = e.target.result; // prendo i dati
+    let stringa = datiFile.split(",")[1]; // separo dati e intestazione
+    alert(atob(stringa));
+    // atob() decodifica da base64, formato in cui sono salvati i dati dell'intestazione
 }
